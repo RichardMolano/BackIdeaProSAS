@@ -1,0 +1,51 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Body,
+  Req,
+  UseGuards,
+  Inject,
+  Patch,
+  Param,
+} from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import { ChatService } from "./chat.service";
+import { SendMessageDto } from "./dto/send-message.dto";
+import { Roles } from "modules/auth/roles.decorator";
+
+@UseGuards(AuthGuard("jwt"))
+@Controller("chat")
+export class ChatController {
+  constructor(@Inject(ChatService) private readonly chatService: ChatService) {} // ⬅️ inyección robusta
+
+  @Get("groups")
+  groups(@Req() req: any) {
+    if (req.user.role === "Admin") {
+      console.log("Admin user detected");
+      return this.chatService.listAllGroups();
+    }
+    return this.chatService.listGroupsForUser(req.user.userId);
+  }
+
+  @Get("messages")
+  messages(@Req() req: any, @Query("groupId") groupId: string) {
+    if (req.user.role === "Admin") {
+      console.log("Admin user detected");
+      return this.chatService.listAllMessages(groupId);
+    }
+    return this.chatService.listMessages(req.user.userId, groupId);
+  }
+
+  @Post("message")
+  send(@Req() req: any, @Body() dto: SendMessageDto) {
+    return this.chatService.sendMessage(
+      req.user.userId,
+      dto.chat_group_id,
+      dto.content,
+      dto.file_url,
+      dto.file_type
+    );
+  }
+}
