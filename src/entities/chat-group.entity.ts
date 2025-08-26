@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { PqrTicket } from "./pqr-ticket.entity";
 import { Message } from "./message.entity";
+import { Assignment } from "./assignment.entity";
 
 @Entity()
 export class ChatGroup {
@@ -26,4 +27,7 @@ export class ChatGroup {
 
   @OneToMany(() => Message, (m) => m.chat_group)
   messages!: Message[];
+
+  @OneToMany(() => Assignment, (a) => a.chat_group)
+  assignments!: Assignment[];
 }

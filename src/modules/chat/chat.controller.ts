@@ -48,4 +48,22 @@ export class ChatController {
       dto.file_type
     );
   }
+
+  @Post("set-group-status")
+  setGroupStatus(
+    @Req() req: any,
+    @Body("chat_group_id") chatGroupId: string,
+    @Body("status") status: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED"
+  ) {
+    return this.chatService.setGroupStatus(
+      req.user.userId,
+      chatGroupId,
+      status
+    );
+  }
+
+  @Get("groups-with-details")
+  getChatGroupsWithDetails() {
+    return this.chatService.getChatGroupsWithDetails();
+  }
 }

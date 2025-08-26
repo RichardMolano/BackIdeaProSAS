@@ -62,6 +62,8 @@ export class ChatService {
     file_type?: string
   ) {
     await this.ensureAccess(userId, groupId);
+    const isActive = await this.isChatActive(groupId);
+    if (!isActive) throw new ForbiddenException("Chat is not active");
     const entity = this.msgRepo.create({
       chat_group: { id: groupId } as any,
       sender_user: { id: userId } as any,
@@ -70,6 +72,14 @@ export class ChatService {
       file_type: file_type || null,
     });
     return this.msgRepo.save(entity);
+  }
+
+  async isChatActive(groupId: string): Promise<boolean> {
+    const group = await this.chatRepo.findOne({
+      where: { id: groupId },
+    });
+    if (!group) throw new NotFoundException("Chat group not found");
+    return group.status === "OPEN" || group.status === "IN_PROGRESS";
   }
 
   private async ensureAccess(userId: string, groupId: string) {
@@ -84,5 +94,38 @@ export class ChatService {
       where: { chat_group: { id: groupId }, solver_user: { id: userId } },
     });
     if (!assigned) throw new ForbiddenException("No access to this chat");
+  }
+
+  async setGroupStatus(
+    userId: string,
+    groupId: string,
+    status: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED"
+  ) {
+    const group = await this.chatRepo.findOne({
+      where: { id: groupId },
+      relations: ["pqr", "pqr.client_user"],
+    });
+    if (!group) throw new NotFoundException("Chat group not found");
+
+    const assigned = await this.asgRepo.findOne({
+      where: { chat_group: { id: groupId }, solver_user: { id: userId } },
+    });
+
+    const isSolver = !!assigned;
+    const isAdmin = group.pqr.client_user.id === userId;
+
+    if (!isSolver && !isAdmin) {
+      throw new ForbiddenException(
+        "Only admin or solver can change the group status"
+      );
+    }
+
+    group.status = status;
+    return this.chatRepo.save(group);
+  }
+  async getChatGroupsWithDetails() {
+    return this.chatRepo.find({
+      relations: ["pqr", "assignments", "assignments.solver_user"],
+    });
   }
 }

@@ -8,7 +8,7 @@ import { Assignment } from "entities/assignment.entity";
 import { ChatGroup } from "entities/chat-group.entity";
 import { PqrTicket } from "entities/pqr-ticket.entity";
 import { User } from "entities/user.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 
 @Injectable()
 export class AssignmentsService {
@@ -20,7 +20,9 @@ export class AssignmentsService {
   ) {}
 
   async listSolvers() {
-    return this.usersRepo.find({ where: { role: { name: "Solver" as any } } });
+    return this.usersRepo.find({
+      where: { role: { name: In(["Solver", "Admin"] as any) } },
+    });
   }
 
   async assign(
@@ -36,6 +38,7 @@ export class AssignmentsService {
       relations: ["pqr"],
     });
     if (!chat) throw new NotFoundException("Chat not found");
+
     const solver = await this.usersRepo.findOne({
       where: { id: solver_user_id },
     });

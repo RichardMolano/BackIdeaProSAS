@@ -4,6 +4,7 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
+  Column,
 } from "typeorm";
 import { PqrTicket } from "./pqr-ticket.entity";
 import { ChatGroup } from "./chat-group.entity";
@@ -21,6 +22,10 @@ export class Assignment {
   @ManyToOne(() => ChatGroup, (cg) => cg.messages, { eager: true })
   @JoinColumn()
   chat_group!: ChatGroup;
+  /*
+  @Column({ type: "varchar", length: 100, nullable: true })
+dependencia!: string | null;
+*/
 
   @ManyToOne(() => User, (u) => u.assignments, { eager: true })
   @JoinColumn()

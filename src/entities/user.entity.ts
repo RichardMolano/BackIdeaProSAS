@@ -22,6 +22,11 @@ export class User {
   @Column({ type: "varchar", length: 255 })
   password_hash!: string;
 
+  /*
+  @Column({ type: "varchar", length: 100, nullable: true })
+dependence!: string | null;
+  */
+
   @ManyToOne(() => Role, (r) => r.users, { eager: true })
   @JoinColumn()
   role!: Role;
