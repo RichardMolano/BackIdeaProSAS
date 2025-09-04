@@ -2,6 +2,8 @@ import {
   Injectable,
   ForbiddenException,
   NotFoundException,
+  Inject,
+  forwardRef,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Assignment } from "entities/assignment.entity";
@@ -9,6 +11,7 @@ import { ChatGroup } from "entities/chat-group.entity";
 import { PqrTicket } from "entities/pqr-ticket.entity";
 import { User } from "entities/user.entity";
 import { In, Repository } from "typeorm";
+import { AssignmentsGateway } from "./assignments.gateway";
 
 @Injectable()
 export class AssignmentsService {
@@ -16,7 +19,9 @@ export class AssignmentsService {
     @InjectRepository(Assignment) private asgRepo: Repository<Assignment>,
     @InjectRepository(ChatGroup) private chatRepo: Repository<ChatGroup>,
     @InjectRepository(User) private usersRepo: Repository<User>,
-    @InjectRepository(PqrTicket) private pqrRepo: Repository<PqrTicket>
+    @InjectRepository(PqrTicket) private pqrRepo: Repository<PqrTicket>,
+    @Inject(forwardRef(() => AssignmentsGateway))
+    private assignmentsGateway: AssignmentsGateway
   ) {}
 
   async listSolvers() {
@@ -56,7 +61,12 @@ export class AssignmentsService {
       solver_user: solver,
       pqr: pqr!,
     });
-    return this.asgRepo.save(asg);
+    const saved = await this.asgRepo.save(asg);
+    this.assignmentsGateway.emitAssignmentChange({
+      type: "assign",
+      assignment: saved,
+    });
+    return saved;
   }
 
   async unassign(
@@ -75,6 +85,10 @@ export class AssignmentsService {
     });
     if (!existing) throw new NotFoundException("Assignment not found");
     await this.asgRepo.remove(existing);
+    this.assignmentsGateway.emitAssignmentChange({
+      type: "unassign",
+      assignment: existing,
+    });
     return { ok: true };
   }
 }

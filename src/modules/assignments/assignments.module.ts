@@ -6,6 +6,7 @@ import { PqrTicket } from "../../entities/pqr-ticket.entity";
 import { User } from "../../entities/user.entity";
 import { AssignmentsController } from "./assignments.controller";
 import { AssignmentsService } from "./assignments.service";
+import { AssignmentsGateway } from "./assignments.gateway";
 import { Role } from "entities/role.entity";
 
 @Module({
@@ -13,7 +14,7 @@ import { Role } from "entities/role.entity";
     TypeOrmModule.forFeature([Assignment, ChatGroup, User, Role, PqrTicket]),
   ],
   controllers: [AssignmentsController],
-  providers: [AssignmentsService],
+  providers: [AssignmentsService, AssignmentsGateway],
   exports: [AssignmentsService],
 })
 export class AssignmentsModule {}

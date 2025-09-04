@@ -24,7 +24,7 @@ import { Assignment } from "./entities/assignment.entity";
       inject: [ConfigService],
       useFactory: async (cfg: ConfigService) => {
         const url = cfg.get<string>("DATABASE_URL");
-        const isSupabase = url?.includes("supabase.com");
+        const isSupabase = url?.includes("supabase.com") ?? false;
         return {
           type: "postgres",
           url,
