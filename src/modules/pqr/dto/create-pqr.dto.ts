@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsIn } from 'class-validator';
+import { IsString, IsOptional, IsIn } from "class-validator";
 
 export class CreatePqrDto {
   @IsString()
@@ -8,6 +8,9 @@ export class CreatePqrDto {
   description!: string;
 
   @IsOptional()
-  @IsIn(['LOW', 'MEDIUM', 'HIGH'])
-  priority?: 'LOW' | 'MEDIUM' | 'HIGH';
+  @IsIn(["LOW", "MEDIUM", "HIGH"])
+  priority?: "LOW" | "MEDIUM" | "HIGH";
+
+  @IsOptional()
+  created_at?: Date;
 }
