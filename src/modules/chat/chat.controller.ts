@@ -14,6 +14,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { ChatService } from "./chat.service";
 import { SendMessageDto } from "./dto/send-message.dto";
 import { Roles } from "modules/auth/roles.decorator";
+import { UUID } from "crypto";
 
 @UseGuards(AuthGuard("jwt"))
 @Controller("chat")
@@ -63,7 +64,9 @@ export class ChatController {
   }
 
   @Get("groups-with-details")
-  getChatGroupsWithDetails() {
-    return this.chatService.getChatGroupsWithDetails();
+  getChatGroupsWithDetails(@Req() req: any) {
+    console.log("User ID: %s", req.user.userId);
+    console.log("User Role: %s", req.user.role);
+    return this.chatService.getChatGroupsWithDetails(req.user.userId);
   }
 }

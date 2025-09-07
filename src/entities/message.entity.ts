@@ -18,9 +18,9 @@ export class Message {
   @JoinColumn()
   chat_group!: ChatGroup;
 
-  @ManyToOne(() => User, (u) => u.messages, { eager: true })
+  @ManyToOne(() => User, (user) => user.messages, { onDelete: "CASCADE" })
   @JoinColumn()
-  sender_user!: User;
+  user!: User;
 
   @Column({ type: "text" })
   content!: string;

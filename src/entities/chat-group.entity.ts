@@ -15,7 +15,7 @@ export class ChatGroup {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @OneToOne(() => PqrTicket, (p) => p.chat_group)
+  @OneToOne(() => PqrTicket, (pqr) => pqr.chat_group, { onDelete: "CASCADE" })
   @JoinColumn()
   pqr!: PqrTicket;
 

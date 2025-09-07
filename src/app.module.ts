@@ -16,6 +16,7 @@ import { PqrTicket } from "./entities/pqr-ticket.entity";
 import { ChatGroup } from "./entities/chat-group.entity";
 import { Message } from "./entities/message.entity";
 import { Assignment } from "./entities/assignment.entity";
+import { Dependence } from "entities/dependence.entity";
 
 @Module({
   imports: [
@@ -31,7 +32,15 @@ import { Assignment } from "./entities/assignment.entity";
           ssl: isSupabase ? { rejectUnauthorized: false } : false,
           autoLoadEntities: true,
           synchronize: true, // for dev. In prod, use migrations
-          entities: [Role, User, PqrTicket, ChatGroup, Message, Assignment],
+          entities: [
+            Role,
+            User,
+            PqrTicket,
+            ChatGroup,
+            Message,
+            Assignment,
+            Dependence,
+          ],
         };
       },
     }),

@@ -27,7 +27,7 @@ export class Assignment {
 dependencia!: string | null;
 */
 
-  @ManyToOne(() => User, (u) => u.assignments, { eager: true })
+  @ManyToOne(() => User, (user) => user.assignments, { onDelete: "CASCADE" })
   @JoinColumn()
   solver_user!: User;
 

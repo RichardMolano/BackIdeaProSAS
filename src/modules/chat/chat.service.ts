@@ -123,9 +123,25 @@ export class ChatService {
     group.status = status;
     return this.chatRepo.save(group);
   }
-  async getChatGroupsWithDetails() {
+  async getChatGroupsWithDetails(userId: string) {
+    const user = await this.asgRepo.findOne({
+      where: { solver_user: { id: userId } },
+      relations: ["solver_user"],
+    });
+    const isAdmin = user?.solver_user?.role.name === "Admin";
+
+    if (isAdmin) {
+      return this.chatRepo.find({
+        relations: [
+          "pqr.client_user",
+          "assignments",
+          "assignments.solver_user",
+        ],
+      });
+    }
     return this.chatRepo.find({
-      relations: ["pqr", "assignments", "assignments.solver_user"],
+      where: { pqr: { client_user: { id: userId } } },
+      relations: ["pqr.client_user", "assignments", "assignments.solver_user"],
     });
   }
 }

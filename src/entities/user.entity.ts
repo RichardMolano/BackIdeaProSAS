@@ -10,6 +10,7 @@ import { Role } from "./role.entity";
 import { PqrTicket } from "./pqr-ticket.entity";
 import { Message } from "./message.entity";
 import { Assignment } from "./assignment.entity";
+import { Dependence } from "./dependence.entity";
 
 @Entity()
 export class User {
@@ -34,9 +35,16 @@ dependence!: string | null;
   @OneToMany(() => PqrTicket, (p) => p.client_user)
   pqrTickets!: PqrTicket[];
 
-  @OneToMany(() => Message, (m) => m.sender_user)
+  @OneToMany(() => Message, (m) => m.user)
   messages!: Message[];
 
   @OneToMany(() => Assignment, (a) => a.solver_user)
   assignments!: Assignment[];
+
+  @ManyToOne(() => Dependence, (d) => d.users, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "dependence_id" })
+  dependence?: Dependence | null;
 }
