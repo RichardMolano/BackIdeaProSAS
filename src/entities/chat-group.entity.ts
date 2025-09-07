@@ -25,7 +25,7 @@ export class ChatGroup {
   @Column({ type: "varchar", length: 20, default: "MEDIUM" })
   priority!: "LOW" | "MEDIUM" | "HIGH";
 
-  @OneToMany(() => Message, (m) => m.chat_group)
+  @OneToMany(() => Message, (message) => message.chat_group)
   messages!: Message[];
 
   @OneToMany(() => Assignment, (a) => a.chat_group)

@@ -9,6 +9,7 @@ import { ChatModule } from "./modules/chat/chat.module";
 import { AssignmentsModule } from "./modules/assignments/assignments.module";
 import { HealthModule } from "./modules/health/health.module";
 import { SeederModule } from "./modules/seeder/seeder.module";
+import { DependenceModule } from "./modules/dependence/dependence.module";
 
 import { Role } from "./entities/role.entity";
 import { User } from "./entities/user.entity";
@@ -51,6 +52,7 @@ import { Dependence } from "entities/dependence.entity";
     AssignmentsModule,
     HealthModule,
     SeederModule,
+    DependenceModule,
   ],
 })
 export class AppModule implements OnModuleInit {

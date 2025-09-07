@@ -41,9 +41,10 @@ export class ChatController {
 
   @Post("message")
   send(@Req() req: any, @Body() dto: SendMessageDto) {
+    console.log("Message DTO:", dto);
     return this.chatService.sendMessage(
       req.user.userId,
-      dto.chat_group_id,
+      dto.groupId,
       dto.content,
       dto.file_url,
       dto.file_type

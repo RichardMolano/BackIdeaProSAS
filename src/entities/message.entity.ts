@@ -6,31 +6,44 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from "typeorm";
-import { ChatGroup } from "./chat-group.entity";
 import { User } from "./user.entity";
+import { ChatGroup } from "./chat-group.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
 @Entity()
 export class Message {
+  @ApiProperty({ example: "uuid-message" })
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @ManyToOne(() => ChatGroup, (cg) => cg.messages, { eager: true })
+  @ApiProperty({ type: () => ChatGroup })
+  @ManyToOne(() => ChatGroup, (chatGroup) => chatGroup.messages, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
   chat_group!: ChatGroup;
 
-  @ManyToOne(() => User, (user) => user.messages, { onDelete: "CASCADE" })
+  @ApiProperty({ type: () => User })
+  @ManyToOne(() => User, (user) => user.messages, {
+    eager: true,
+    onDelete: "SET NULL",
+  })
   @JoinColumn()
   user!: User;
 
+  @ApiProperty({ example: "Contenido del mensaje" })
   @Column({ type: "text" })
   content!: string;
 
-  @Column({ type: "text", nullable: true })
+  @ApiProperty({ example: "https://example.com/file.pdf", required: false })
+  @Column({ type: "varchar", length: 500, nullable: true })
   file_url?: string | null;
 
-  @Column({ type: "varchar", length: 64, nullable: true })
+  @ApiProperty({ example: "pdf", required: false })
+  @Column({ type: "varchar", length: 100, nullable: true })
   file_type?: string | null;
 
+  @ApiProperty({ example: "2024-06-01T12:00:00Z" })
   @CreateDateColumn()
   created_at!: Date;
 }

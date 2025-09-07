@@ -1,8 +1,8 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional } from "class-validator";
 
 export class SendMessageDto {
   @IsString()
-  chat_group_id!: string;
+  groupId!: string;
 
   @IsString()
   content!: string;
