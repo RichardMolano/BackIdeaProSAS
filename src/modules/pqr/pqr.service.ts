@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ChatGroup } from "../../entities/chat-group.entity";
 import { PqrTicket } from "../../entities/pqr-ticket.entity";
 import { User } from "../../entities/user.entity";
+import { Dependence } from "../../entities/dependence.entity";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -10,23 +11,35 @@ export class PqrService {
   constructor(
     @InjectRepository(PqrTicket) private pqrRepo: Repository<PqrTicket>,
     @InjectRepository(User) private usersRepo: Repository<User>,
-    @InjectRepository(ChatGroup) private chatRepo: Repository<ChatGroup>
+    @InjectRepository(ChatGroup) private chatRepo: Repository<ChatGroup>,
+    @InjectRepository(Dependence) private dependenceRepo: Repository<Dependence>
   ) {}
 
   async createPqr(
     clientUserId: string,
     title: string,
     description: string,
-    priority: "LOW" | "MEDIUM" | "HIGH" = "MEDIUM"
+    priority: "LOW" | "MEDIUM" | "HIGH" = "MEDIUM",
+    dependenceId?: string | null
   ) {
     const user = await this.usersRepo.findOne({ where: { id: clientUserId } });
     if (!user) throw new NotFoundException("User not found");
+
+    let dependence: Dependence | null = null;
+    if (dependenceId) {
+      dependence = await this.dependenceRepo.findOne({
+        where: { id: dependenceId },
+      });
+      if (!dependence) throw new NotFoundException("Dependence not found");
+    }
+
     const pqr = this.pqrRepo.create({
       client_user: user,
       title,
       description,
       priority,
       status: "OPEN",
+      dependence: dependence || undefined,
     });
     const saved = await this.pqrRepo.save(pqr);
     const chat = this.chatRepo.create({ pqr: saved, status: "OPEN", priority });

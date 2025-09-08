@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "bunx tsx -r tsconfig-paths/register src/main.ts",
+    "start:dev": "bunx nest start --watch",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/main.js"
   },

@@ -24,7 +24,8 @@ export class PqrController {
       uid,
       dto.title,
       dto.description,
-      dto.priority || "MEDIUM"
+      dto.priority || "MEDIUM",
+      dto.dependence ? dto.dependence : null
     );
   }
 
