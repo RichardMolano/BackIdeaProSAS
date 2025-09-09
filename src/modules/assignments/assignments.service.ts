@@ -12,6 +12,7 @@ import { PqrTicket } from "entities/pqr-ticket.entity";
 import { User } from "entities/user.entity";
 import { In, Repository } from "typeorm";
 import { AssignmentsGateway } from "./assignments.gateway";
+import { Dependence } from "entities/dependence.entity";
 
 @Injectable()
 export class AssignmentsService {
@@ -20,14 +21,21 @@ export class AssignmentsService {
     @InjectRepository(ChatGroup) private chatRepo: Repository<ChatGroup>,
     @InjectRepository(User) private usersRepo: Repository<User>,
     @InjectRepository(PqrTicket) private pqrRepo: Repository<PqrTicket>,
+    @InjectRepository(Dependence)
+    private dependenceRepo: Repository<Dependence>,
     @Inject(forwardRef(() => AssignmentsGateway))
     private assignmentsGateway: AssignmentsGateway
   ) {}
 
   async listSolvers() {
-    return this.usersRepo.find({
+    const solvers = await this.usersRepo.find({
       where: { role: { name: In(["Solver", "Admin"] as any) } },
+      relations: ["dependence"],
     });
+    return solvers.map((solver) => ({
+      ...solver,
+      dependence: solver.dependence || null,
+    }));
   }
 
   async assign(

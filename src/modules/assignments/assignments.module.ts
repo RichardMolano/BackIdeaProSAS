@@ -8,10 +8,18 @@ import { AssignmentsController } from "./assignments.controller";
 import { AssignmentsService } from "./assignments.service";
 import { AssignmentsGateway } from "./assignments.gateway";
 import { Role } from "entities/role.entity";
+import { Dependence } from "entities/dependence.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Assignment, ChatGroup, User, Role, PqrTicket]),
+    TypeOrmModule.forFeature([
+      Assignment,
+      ChatGroup,
+      User,
+      Role,
+      PqrTicket,
+      Dependence,
+    ]),
   ],
   controllers: [AssignmentsController],
   providers: [AssignmentsService, AssignmentsGateway],
