@@ -7,9 +7,9 @@ import {
   JoinColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { PqrTicket } from "./pqr-ticket.entity";
-import { Message } from "./message.entity";
-import { Assignment } from "./assignment.entity";
+import type { PqrTicket } from "./pqr-ticket.entity";
+import type { Message } from "./message.entity";
+import type { Assignment } from "./assignment.entity";
 
 @Entity()
 export class ChatGroup {
@@ -21,11 +21,15 @@ export class ChatGroup {
   id!: string;
 
   @ApiProperty({
-    type: () => PqrTicket,
+    type: () => require("./pqr-ticket.entity").PqrTicket,
     description: "PQR asociada al grupo de chat",
     required: true,
   })
-  @OneToOne(() => PqrTicket, (pqr) => pqr.chat_group, { onDelete: "CASCADE" })
+  @OneToOne(
+    () => require("./pqr-ticket.entity").PqrTicket,
+    (pqr: any) => pqr.chat_group,
+    { onDelete: "CASCADE" }
+  )
   @JoinColumn()
   pqr!: PqrTicket;
 
@@ -46,22 +50,28 @@ export class ChatGroup {
   priority!: "LOW" | "MEDIUM" | "HIGH";
 
   @ApiProperty({
-    type: () => [Message],
+    type: () => [require("./message.entity").Message],
     description: "Mensajes asociados al grupo de chat",
     isArray: true,
     required: false,
     nullable: true,
   })
-  @OneToMany(() => Message, (message) => message.chat_group)
+  @OneToMany(
+    () => require("./message.entity").Message,
+    (message: any) => message.chat_group
+  )
   messages!: Message[];
 
   @ApiProperty({
-    type: () => [Assignment],
+    type: () => [require("./assignment.entity").Assignment],
     description: "Asignaciones asociadas al grupo de chat",
     isArray: true,
     required: false,
     nullable: true,
   })
-  @OneToMany(() => Assignment, (a) => a.chat_group)
+  @OneToMany(
+    () => require("./assignment.entity").Assignment,
+    (a: any) => a.chat_group
+  )
   assignments!: Assignment[];
 }

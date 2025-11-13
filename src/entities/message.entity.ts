@@ -6,8 +6,8 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from "typeorm";
-import { User } from "./user.entity";
-import { ChatGroup } from "./chat-group.entity";
+import type { User } from "./user.entity";
+import type { ChatGroup } from "./chat-group.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
 @Entity()
@@ -16,18 +16,26 @@ export class Message {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @ApiProperty({ type: () => ChatGroup })
-  @ManyToOne(() => ChatGroup, (chatGroup) => chatGroup.messages, {
-    onDelete: "CASCADE",
-  })
+  @ApiProperty({ type: () => require("./chat-group.entity").ChatGroup })
+  @ManyToOne(
+    () => require("./chat-group.entity").ChatGroup,
+    (chatGroup: any) => chatGroup.messages,
+    {
+      onDelete: "CASCADE",
+    }
+  )
   @JoinColumn()
   chat_group!: ChatGroup;
 
-  @ApiProperty({ type: () => User })
-  @ManyToOne(() => User, (user) => user.messages, {
-    eager: true,
-    onDelete: "SET NULL",
-  })
+  @ApiProperty({ type: () => require("./user.entity").User })
+  @ManyToOne(
+    () => require("./user.entity").User,
+    (user: any) => user.messages,
+    {
+      eager: true,
+      onDelete: "SET NULL",
+    }
+  )
   @JoinColumn()
   user!: User;
 

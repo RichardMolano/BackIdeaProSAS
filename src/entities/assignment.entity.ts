@@ -7,9 +7,9 @@ import {
   Column,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { PqrTicket } from "./pqr-ticket.entity";
-import { ChatGroup } from "./chat-group.entity";
-import { User } from "./user.entity";
+import type { PqrTicket } from "./pqr-ticket.entity";
+import type { ChatGroup } from "./chat-group.entity";
+import type { User } from "./user.entity";
 
 @Entity()
 export class Assignment {
@@ -21,20 +21,28 @@ export class Assignment {
   id!: string;
 
   @ApiProperty({
-    type: () => PqrTicket,
+    type: () => require("./pqr-ticket.entity").PqrTicket,
     description: "PQR asignada",
     required: true,
   })
-  @ManyToOne(() => PqrTicket, (p) => p.assignments, { eager: true })
+  @ManyToOne(
+    () => require("./pqr-ticket.entity").PqrTicket,
+    (p: any) => p.assignments,
+    { eager: true }
+  )
   @JoinColumn()
   pqr!: PqrTicket;
 
   @ApiProperty({
-    type: () => ChatGroup,
+    type: () => require("./chat-group.entity").ChatGroup,
     description: "Grupo de chat asociado",
     required: true,
   })
-  @ManyToOne(() => ChatGroup, (cg) => cg.messages, { eager: true })
+  @ManyToOne(
+    () => require("./chat-group.entity").ChatGroup,
+    (cg: any) => cg.messages,
+    { eager: true }
+  )
   @JoinColumn()
   chat_group!: ChatGroup;
 
@@ -45,11 +53,15 @@ export class Assignment {
   */
 
   @ApiProperty({
-    type: () => User,
+    type: () => require("./user.entity").User,
     description: "Usuario solucionador",
     required: true,
   })
-  @ManyToOne(() => User, (user) => user.assignments, { onDelete: "CASCADE" })
+  @ManyToOne(
+    () => require("./user.entity").User,
+    (user: any) => user.assignments,
+    { onDelete: "CASCADE" }
+  )
   @JoinColumn()
   solver_user!: User;
 

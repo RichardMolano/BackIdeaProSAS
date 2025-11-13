@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { User } from "./user.entity";
+import type { User } from "./user.entity";
 
 @Entity()
 export class Role {
@@ -20,12 +20,12 @@ export class Role {
   name!: "Admin" | "Client" | "Solver" | "Supervisor";
 
   @ApiProperty({
-    type: () => [User],
+    type: () => [require("./user.entity").User],
     description: "Usuarios asociados al rol",
     isArray: true,
     required: false,
     nullable: true,
   })
-  @OneToMany(() => User, (u) => u.role)
+  @OneToMany(() => require("./user.entity").User, (u: any) => u.role)
   users!: User[];
 }

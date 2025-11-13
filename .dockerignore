@@ -1,0 +1,45 @@
+# Dependencias
+
+node_modules
+bun.lockb
+package-lock.json
+yarn.lock
+
+# Logs
+
+logs
+\*.log
+
+# Build output
+
+dist
+build
+
+# Archivos de prueba
+
+coverage
+_.test.ts
+_.spec.ts
+
+# Archivos de entorno
+
+.env.local
+
+# Git
+
+.git
+.gitignore
+
+# IDE
+
+.vscode
+.idea
+
+# OS
+
+.DS_Store
+Thumbs.db
+
+# Otros
+
+README.md

@@ -8,10 +8,10 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from "typeorm";
-import { User } from "./user.entity";
-import { ChatGroup } from "./chat-group.entity";
-import { Assignment } from "./assignment.entity";
-import { Dependence } from "./dependence.entity";
+import type { User } from "./user.entity";
+import type { ChatGroup } from "./chat-group.entity";
+import type { Assignment } from "./assignment.entity";
+import type { Dependence } from "./dependence.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
 export type PqrStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
@@ -23,8 +23,8 @@ export class PqrTicket {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @ApiProperty({ type: () => User })
-  @ManyToOne(() => User, (u) => u.pqrTickets, {
+  @ApiProperty({ type: () => require("./user.entity").User })
+  @ManyToOne(() => require("./user.entity").User, (u: any) => u.pqrTickets, {
     eager: true,
     onDelete: "CASCADE",
   })
@@ -54,16 +54,24 @@ export class PqrTicket {
   @CreateDateColumn()
   created_at!: Date;
 
-  @ApiProperty({ type: () => ChatGroup })
-  @OneToOne(() => ChatGroup, (cg) => cg.pqr, { cascade: true, eager: true })
+  @ApiProperty({ type: () => require("./chat-group.entity").ChatGroup })
+  @OneToOne(
+    () => require("./chat-group.entity").ChatGroup,
+    (cg: any) => cg.pqr,
+    { cascade: true, eager: true }
+  )
   chat_group!: ChatGroup;
 
-  @ApiProperty({ type: () => [Assignment] })
-  @OneToMany(() => Assignment, (a) => a.pqr)
+  @ApiProperty({ type: () => [require("./assignment.entity").Assignment] })
+  @OneToMany(() => require("./assignment.entity").Assignment, (a: any) => a.pqr)
   assignments!: Assignment[];
 
-  @ApiProperty({ type: () => Dependence })
-  @ManyToOne(() => Dependence, (d) => d.pqrs, { eager: true })
+  @ApiProperty({ type: () => require("./dependence.entity").Dependence })
+  @ManyToOne(
+    () => require("./dependence.entity").Dependence,
+    (d: any) => d.pqrs,
+    { eager: true }
+  )
   @JoinColumn({ name: "dependence_id" })
   dependence!: Dependence;
 }

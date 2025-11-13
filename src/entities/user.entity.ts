@@ -7,11 +7,11 @@ import {
   JoinColumn,
 } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { Role } from "./role.entity";
-import { PqrTicket } from "./pqr-ticket.entity";
-import { Message } from "./message.entity";
-import { Assignment } from "./assignment.entity";
-import { Dependence } from "./dependence.entity";
+import type { Role } from "./role.entity";
+import type { PqrTicket } from "./pqr-ticket.entity";
+import type { Message } from "./message.entity";
+import type { Assignment } from "./assignment.entity";
+import type { Dependence } from "./dependence.entity";
 
 @Entity()
 export class User {
@@ -43,54 +43,66 @@ export class User {
   */
 
   @ApiProperty({
-    type: () => Role,
+    type: () => require("./role.entity").Role,
     description: "Rol del usuario",
     required: true,
   })
-  @ManyToOne(() => Role, (r) => r.users, { eager: true })
+  @ManyToOne(() => require("./role.entity").Role, (r: any) => r.users, {
+    eager: true,
+  })
   @JoinColumn()
   role!: Role;
 
   @ApiProperty({
-    type: () => [PqrTicket],
+    type: () => [require("./pqr-ticket.entity").PqrTicket],
     description: "PQRs creadas por el usuario",
     isArray: true,
     required: false,
     nullable: true,
   })
-  @OneToMany(() => PqrTicket, (p) => p.client_user)
+  @OneToMany(
+    () => require("./pqr-ticket.entity").PqrTicket,
+    (p: any) => p.client_user
+  )
   pqrTickets!: PqrTicket[];
 
   @ApiProperty({
-    type: () => [Message],
+    type: () => [require("./message.entity").Message],
     description: "Mensajes enviados por el usuario",
     isArray: true,
     required: false,
     nullable: true,
   })
-  @OneToMany(() => Message, (m) => m.user)
+  @OneToMany(() => require("./message.entity").Message, (m: any) => m.user)
   messages!: Message[];
 
   @ApiProperty({
-    type: () => [Assignment],
+    type: () => [require("./assignment.entity").Assignment],
     description: "Asignaciones del usuario como solucionador",
     isArray: true,
     required: false,
     nullable: true,
   })
-  @OneToMany(() => Assignment, (a) => a.solver_user)
+  @OneToMany(
+    () => require("./assignment.entity").Assignment,
+    (a: any) => a.solver_user
+  )
   assignments!: Assignment[];
 
   @ApiProperty({
-    type: () => Dependence,
+    type: () => require("./dependence.entity").Dependence,
     description: "Dependencia asociada al usuario",
     required: false,
     nullable: true,
   })
-  @ManyToOne(() => Dependence, (d) => d.users, {
-    nullable: true,
-    onDelete: "SET NULL",
-  })
+  @ManyToOne(
+    () => require("./dependence.entity").Dependence,
+    (d: any) => d.users,
+    {
+      nullable: true,
+      onDelete: "SET NULL",
+    }
+  )
   @JoinColumn({ name: "dependence_id" })
   dependence?: Dependence | null;
 }
